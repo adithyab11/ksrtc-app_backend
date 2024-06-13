@@ -24,6 +24,28 @@ app.post("/signup",async(req,res)=>
     res.json({"status":"success"})
 })
 
+app.post("/login",(req,res)=>
+{
+    let input=req.body
+    ksrtcmodel.find({"email":req.body.email}).then(
+        (response)=>{
+            if(response.length>0){
+                let dbPassword=response[0].password
+                console.log(dbPassword)
+                bcrypt.compare(input.password,dbPassword,(error,isMatch)=>
+                {
+                    if(isMatch){
+                        res.json({"status":"success","userID":response[0]._id})
+                    }
+                    else{
+                        res.json({"status":"incorrect password"})
+                    }
+                })
+            }
+        }
+    )
+})
+
 app.listen(8083,()=>
 {
     console.log("server started")
